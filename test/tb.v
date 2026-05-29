@@ -1,69 +1,107 @@
 `default_nettype none
-`timescale 1ns / 1ps
+
 
 /* This testbench just instantiates the module and makes some convenient wires
    that can be driven / tested by the cocotb test.py.
 */
 
-module tb_johnson_counter;
+`timescale 1ns / 1ps
 
-    // Parameters
-    parameter N = 4;
+module tb;
 
-    // Testbench signals
-    reg clk;
-    reg rst;
-    reg enable;
-    wire [N-1:0] q;
+  // -----------------------------
+  // Dump waveform
+  // -----------------------------
+  initial begin
+    $dumpfile("tb.fst");
+    $dumpvars(0, tb);
+  end
 
-    // DUT (Design Under Test)
-    johnson_counter #(
-        .N(N)
-    ) uut (
-        .clk(clk),
-        .rst(rst),
-        .enable(enable),
-        .q(q)
-    );
+  // -----------------------------
+  // DUT signals (TinyTapeout style)
+  // -----------------------------
+  reg clk;
+  reg rst_n;
+  reg ena;
+  reg [7:0] ui_in;
+  reg [7:0] uio_in;
 
-    // Clock generation (100 MHz equivalent: 10ns period)
-    always #5 clk = ~clk;
+  wire [7:0] uo_out;
+  wire [7:0] uio_out;
+  wire [7:0] uio_oe;
 
-    // Stimulus
-    initial begin
-        // Initialize signals
-        clk = 0;
-        rst = 1;
-        enable = 0;
+`ifdef GL_TEST
+  wire VPWR = 1'b1;
+  wire VGND = 1'b0;
+`endif
 
-        // Hold reset for a few cycles
-        #20;
-        rst = 0;
+  // -----------------------------
+  // DUT INSTANTIATION
+  // Replace with YOUR module name
+  // -----------------------------
+  tt_um_johnson_counter user_project (
 
-        // Enable counter
-        enable = 1;
+`ifdef GL_TEST
+    .VPWR(VPWR),
+    .VGND(VGND),
+`endif
 
-        // Let it run for some cycles
-        #100;
+    .ui_in(ui_in),
+    .uo_out(uo_out),
+    .uio_in(uio_in),
+    .uio_out(uio_out),
+    .uio_oe(uio_oe),
+    .ena(ena),
+    .clk(clk),
+    .rst_n(rst_n)
+  );
 
-        // Disable counter (test pause feature)
-        enable = 0;
+  // -----------------------------
+  // CLOCK GENERATION
+  // -----------------------------
+  always #5 clk = ~clk;
 
-        #30;
+  // -----------------------------
+  // STIMULUS
+  // -----------------------------
+  initial begin
 
-        // Re-enable counter
-        enable = 1;
+    // Init
+    clk = 0;
+    rst_n = 0;
+    ena = 0;
+    ui_in = 0;
+    uio_in = 0;
 
-        #80;
+    // Reset
+    #20;
+    rst_n = 1;
 
-        // Finish simulation
-        $stop;
-    end
+    // Enable design
+    ena = 1;
 
-    // Monitor output
-    initial begin
-        $monitor("Time=%0t | rst=%b | enable=%b | q=%b",
-                  $time, rst, enable, q);
-    end
+    // Run simulation
+    #200;
+
+    // Disable (hold)
+    ena = 0;
+
+    #50;
+
+    // Re-enable
+    ena = 1;
+
+    #100;
+
+    $finish;
+  end
+
+  // -----------------------------
+  // MONITOR OUTPUT
+  // -----------------------------
+  initial begin
+    $monitor("Time=%0t | rst_n=%b | ena=%b | uo_out=%b",
+              $time, rst_n, ena, uo_out);
+  end
 
 endmodule
