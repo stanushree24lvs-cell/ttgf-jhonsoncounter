@@ -9,6 +9,7 @@ The design generates a repeating sequence of unique binary states and is widely 
 ---
 
 ## How it works
+
 This project implements a **4-bit Johnson (Twisted Ring) Counter** using sequential logic flip-flops.
 
 A Johnson counter shifts data in a circular manner, but with one important modification:
@@ -18,4 +19,3 @@ This creates a unique sequence of states:
 
 ```text
 0000 → 1000 → 1100 → 1110 → 1111 → 0111 → 0011 → 0001 → 0000
-
