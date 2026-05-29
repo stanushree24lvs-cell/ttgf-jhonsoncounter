@@ -7,34 +7,70 @@ from cocotb.triggers import ClockCycles
 
 
 @cocotb.test()
-async def test_project(dut):
-    dut._log.info("Start")
+async def test_johnson_counter(dut):
+    dut._log.info("Starting Johnson Counter Test")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, unit="us")
+    # Create clock (10 ns period = 100 MHz)
+    clock = Clock(dut.clk, 10, unit="ns")
     cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
-    dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
+    # -------------------------
+    # RESET PHASE
+    # -------------------------
+    dut._log.info("Applying reset")
 
-    dut._log.info("Test project behavior")
+    dut.rst.value = 1
+    dut.enable.value = 0
+    await ClockCycles(dut.clk, 3)
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    dut.rst.value = 0
+    dut._log.info("Reset released")
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+    # -------------------------
+    # ENABLE COUNTER
+    # -------------------------
+    dut.enable.value = 1
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+    expected_states = [
+        0b0000,
+        0b1000,
+        0b1100,
+        0b1110,
+        0b1111,
+        0b0111,
+        0b0011,
+        0b0001,
+    ]
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    dut._log.info("Checking Johnson sequence")
+
+    # Check first 8 states
+    for i, expected in enumerate(expected_states):
+        await ClockCycles(dut.clk, 1)
+        actual = dut.q.value.integer
+
+        assert actual == expected, \
+            f"Mismatch at step {i}: expected {bin(expected)}, got {bin(actual)}"
+
+    # -------------------------
+    # TEST ENABLE = 0 (HOLD STATE)
+    # -------------------------
+    dut._log.info("Testing hold behavior")
+
+    dut.enable.value = 0
+    hold_value = dut.q.value.integer
+
+    await ClockCycles(dut.clk, 5)
+
+    assert dut.q.value.integer == hold_value, \
+        "Counter changed even when enable=0"
+
+    # -------------------------
+    # RE-ENABLE TEST
+    # -------------------------
+    dut._log.info("Re-enabling counter")
+
+    dut.enable.value = 1
+    await ClockCycles(dut.clk, 4)
+
+    dut._log.info("Test completed successfully")
