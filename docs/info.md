@@ -9,13 +9,21 @@ The design generates a repeating sequence of unique binary states and is widely 
 ---
 
 ## How it works
+The counter consists of **4 flip-flops** connected in series.  
+On each clock pulse:
 
-This project implements a **4-bit Johnson (Twisted Ring) Counter** using sequential logic flip-flops.
+- Data shifts from one flip-flop to the next.
+- The inverted output of the last flip-flop is fed back to the first flip-flop.
+- This feedback creates a sequence of states that repeats after **8 clock cycles**.
 
-A Johnson counter shifts data in a circular manner, but with one important modification:
-the inverted output of the last flip-flop is fed back into the first flip-flop.
-
-This creates a unique sequence of states:
-
+### State Sequence
 ```text
-0000 → 1000 → 1100 → 1110 → 1111 → 0111 → 0011 → 0001 → 0000
+0000
+1000
+1100
+1110
+1111
+0111
+0011
+0001
+0000
