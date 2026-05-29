@@ -1,10 +1,4 @@
 `default_nettype none
-
-
-/* This testbench just instantiates the module and makes some convenient wires
-   that can be driven / tested by the cocotb test.py.
-*/
-
 `timescale 1ns / 1ps
 
 module tb;
@@ -37,9 +31,9 @@ module tb;
 
   // -----------------------------
   // DUT INSTANTIATION
-  // Replace with YOUR module name
+  // CHANGE NAME IF REQUIRED
   // -----------------------------
-  tt_um_johnson_counter user_project (
+  tt_um_johnson_counter uut (
 
 `ifdef GL_TEST
     .VPWR(VPWR),
@@ -57,7 +51,7 @@ module tb;
   );
 
   // -----------------------------
-  // CLOCK GENERATION
+  // CLOCK (100 MHz)
   // -----------------------------
   always #5 clk = ~clk;
 
@@ -66,7 +60,6 @@ module tb;
   // -----------------------------
   initial begin
 
-    // Init
     clk = 0;
     rst_n = 0;
     ena = 0;
@@ -77,18 +70,18 @@ module tb;
     #20;
     rst_n = 1;
 
-    // Enable design
+    // Enable counter
     ena = 1;
 
-    // Run simulation
+    // Run
     #200;
 
-    // Disable (hold)
+    // Pause
     ena = 0;
 
     #50;
 
-    // Re-enable
+    // Resume
     ena = 1;
 
     #100;
