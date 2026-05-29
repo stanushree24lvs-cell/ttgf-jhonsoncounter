@@ -7,14 +7,11 @@ You can also include images in this folder and reference them in the markdown. E
 512 kb in size, and the combined size of all images must be less than 1 MB.
 -->
 
-## How it works
+## 🔷 How it works
 
-Explain how your project works
+This project implements a **4-bit Johnson (Twisted Ring) Counter** using sequential logic flip-flops.
 
-## How to test
+A Johnson counter shifts data in a circular manner, but with a key modification:  
+the inverted output of the last flip-flop is fed back into the first flip-flop.
 
-Explain how to use your project
-
-## External hardware
-
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+This creates a unique sequence of states:
