@@ -13,17 +13,16 @@ module tt_um_johnson_counter (
 
 reg [3:0] q;
 
-always @(posedge clk) begin
+always @(posedge clk or negedge rst_n) begin
     if (!rst_n)
         q <= 4'b0000;
     else if (ena)
         q <= {q[2:0], ~q[3]};
 end
 
-assign uo_out[3:0] = q;
-assign uo_out[7:4] = 4'b0000;
+assign uo_out = {4'b0000, q};
 
 assign uio_out = 8'b0;
-assign uio_oe   = 8'b0;
+assign uio_oe  = 8'b0;
 
 endmodule
