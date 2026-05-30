@@ -1,25 +1,18 @@
-# Tiny Tapeout project information
 project:
-  title:        "Johnson Counter Design"
-  author:       "Your Name"
-  discord:      "your_discord_id"
-  description:  "4-bit parameterized Johnson (twisted ring) counter with enable and synchronous reset"
-  language:     "Verilog"
-  clock_hz:     100000000   # 100 MHz (typical FPGA clock)
+  title: "Johnson Counter Design"
+  author: "Your Name"
+  discord: "your_discord_id"
+  description: "4-bit Johnson (twisted ring) counter with enable and synchronous reset"
+  language: "Verilog"
+  clock_hz: 100000000
 
-  # A simple sequential design fits in one tile
   tiles: "1x1"
-
-  # IMPORTANT: update this with your actual TT module name
   top_module: "tt_um_johnson_counter"
 
-  # Source files
   source_files:
     - "project.v"
 
-# Pin mapping for datasheet / UI
 pinout:
-  # Inputs
   ui[0]: "CLK"
   ui[1]: "RESET"
   ui[2]: "ENABLE"
@@ -29,7 +22,6 @@ pinout:
   ui[6]: ""
   ui[7]: ""
 
-  # Outputs (4-bit Johnson counter output)
   uo[0]: "Q0"
   uo[1]: "Q1"
   uo[2]: "Q2"
@@ -39,7 +31,6 @@ pinout:
   uo[6]: ""
   uo[7]: ""
 
-  # Bidirectional pins (not used)
   uio[0]: ""
   uio[1]: ""
   uio[2]: ""
@@ -49,5 +40,4 @@ pinout:
   uio[6]: ""
   uio[7]: ""
 
-# Do not change!
 yaml_version: 6
