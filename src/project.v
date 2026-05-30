@@ -1,26 +1,29 @@
-/*
- * Copyright (c) 2024 Your Name
- * SPDX-License-Identifier: Apache-2.0
- */
-
 `default_nettype none
 
-module johnson_counter #(
-    parameter N = 4
-)(
-    input  wire clk,
-    input  wire rst,
-    input  wire enable,
-    output reg  [N-1:0] q
+module tt_um_johnson_counter (
+    input  wire [7:0] ui_in,
+    output wire [7:0] uo_out,
+    input  wire [7:0] uio_in,
+    output wire [7:0] uio_out,
+    output wire [7:0] uio_oe,
+    input  wire       clk,
+    input  wire       rst_n,
+    input  wire       ena
 );
 
+reg [3:0] q;
+
 always @(posedge clk) begin
-    if (rst) begin
-        q <= {N{1'b0}};   // clean reset
-    end
-    else if (enable) begin
-        q <= {q[N-2:0], ~q[N-1]};   // Johnson feedback shift
-    end
+    if (!rst_n)
+        q <= 4'b0000;
+    else if (ena)
+        q <= {q[2:0], ~q[3]};
 end
 
-endmodule 
+assign uo_out[3:0] = q;
+assign uo_out[7:4] = 4'b0000;
+
+assign uio_out = 8'b0;
+assign uio_oe   = 8'b0;
+
+endmodule
