@@ -15,7 +15,7 @@ project:
 
   # Source files
   source_files:
-    - "johnson_counter.v"
+    - "project.v"
 
 # Pin mapping for datasheet / UI
 pinout:
